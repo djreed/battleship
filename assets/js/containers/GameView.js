@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { Row, Col } from 'react-bootstrap';
 import { Button } from 'react-bootstrap';
-import Grid from './Grid';
+import Cells from './Cells';
 import ChatPanel from './ChatPanel';
 import { placeShip, attack, sendMsg, resetGame } from '../actions/app';
 
@@ -88,13 +88,13 @@ class GameView extends React.Component {
         <Row>
           <Col md={5}>
             {player &&
-              <Grid style={{ width: '100%'}}  player={player} handleClick={this.handleClick}
+              <Cells style={{ width: '100%'}}  player={player} handleClick={this.handleClick}
                     status={status} ships_to_place={ships_to_place} is_user={true} />
             }
           </Col>
           <Col md={5}>
             {opponent &&
-              <Grid style={{ width: '100%'}} player={opponent}  handleClick={this.handleClick}
+              <Cells style={{ width: '100%'}} player={opponent}  handleClick={this.handleClick}
                     status={status} is_user={false} />
             }
           </Col>
