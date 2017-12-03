@@ -12,7 +12,7 @@ const styles = StyleSheet.create({
     borderStyle: 'solid',
 
     ':hover': {
-      backgroundColor: 'purple',
+      backgroundColor: 'green',
     }
   },
 });
@@ -35,17 +35,17 @@ class Cell extends React.Component {
   getColor() {
     switch (this.props.symbol) {
       case '?':
-        return 'gray';
-      case '~':
-        return 'blue';
-      case '|':
-        return 'lightgray';
-      case 'O':
         return 'white';
+      case '~':
+        return 'steelblue';
+      case '|':
+        return 'darkslategrey';
+      case 'O':
+        return 'purple';
       case 'X':
         return 'red';
       default:
-        return 'gray';
+        return 'white';
     }
   }
 
@@ -60,7 +60,9 @@ class Cell extends React.Component {
 
   render() {
     return (
-      <div onClick={this.handleClick} className={css(styles.bodyCell)} style={{ backgroundColor: this.getColor() }}>
+      <div onClick={this.handleClick}
+        className={css(styles.bodyCell)}
+        style={{ backgroundColor: this.getColor() }}>
       </div>
     );
   }
