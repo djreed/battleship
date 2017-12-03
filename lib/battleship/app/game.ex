@@ -167,7 +167,6 @@ defmodule Battleship.App.Game do
   end
 
   def send_waiting(player_id) do
-    IO.puts("sending waiting status")
     Endpoint.broadcast!("game:" <> Integer.to_string(player_id),
       "new_game_status", %{status: "WAITING"})
   end

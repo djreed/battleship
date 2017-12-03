@@ -1,6 +1,6 @@
 defmodule Battleship.App.Board do
 
-  @grid_size 10
+  @cells_size 10
 
   @unknown "?"
   @water "~"
@@ -8,14 +8,12 @@ defmodule Battleship.App.Board do
   @water_hit "O"
   @ship_hit "X"
 
-  # create a new board for user of name, id
-  # a board is a 10x10 grid, initially blank
   def new(id, name) do
     %{
       id: String.to_integer(id),
       name: name,
-      grid: make_water_grid(),
-      ships_to_place: list_all_ships(),
+      cells: water_cells(),
+      ships_to_place: ship_sizes(),
     }
   end
 
@@ -23,30 +21,26 @@ defmodule Battleship.App.Board do
     %{
       id: board.id,
       name: board.name,
-      grid: make_water_grid(),
-      ships_to_place: list_all_ships(),
+      cells: water_cells(),
+      ships_to_place: ship_sizes(),
     }
   end
 
-  # lists all ships
-  def list_all_ships do
+  def ship_sizes do
     [5, 4, 3, 3, 2]
   end
 
-  # constructs a 10x10 grid of water
-  def make_water_grid do
+  def water_cells do
     List.duplicate(List.duplicate(@water, 10), 10)
   end
 
-  # replaces a boards grid with a sanitized one
   def sanitize(board) do
-    Map.update!(board, :grid, &(sanitize_grid(&1)))
+    Map.update!(board, :cells, &(sanitize_cells(&1)))
     |> Map.drop([:ships_to_place])
   end
 
-  # returns a new grid containing only hits and unknowns
-  def sanitize_grid(grid) do
-    Enum.map(grid, fn row -> sanitize_row(row) end)
+  def sanitize_cells(cells) do
+    Enum.map(cells, fn row -> sanitize_row(row) end)
   end
 
   def sanitize_row(row) do
@@ -61,25 +55,20 @@ defmodule Battleship.App.Board do
     end
   end
 
-
-  #TODO refactor placement, can_place, etc to user get and set grid value funcs
-
-  #This assumes that the ship can be placed (can_place? was called)
-  # also strips the first ship from the list of ships to place
   def place_ship(board, %{"size" => size, "orientation" => orient, "coords" => coords}) do
     case orient do
-      "horizontal" -> Map.update!(board, :grid,
-                        fn grid ->
-                          place_ship(:horizontal, grid, size, coords)
+      "horizontal" -> Map.update!(board, :cells,
+                        fn cells ->
+                          place_ship_at(:horizontal, cells, size, coords)
                         end)
                      |> Map.update!(:ships_to_place,
                         fn x ->
                           Enum.drop(x, 1)
                         end)
 
-      "vertical" -> Map.update!(board, :grid,
-                      fn grid ->
-                        place_ship(:vertical, grid, size, coords)
+      "vertical" -> Map.update!(board, :cells,
+                      fn cells ->
+                        place_ship_at(:vertical, cells, size, coords)
                       end)
                     |> Map.update!(:ships_to_place,
                          fn x ->
@@ -88,32 +77,30 @@ defmodule Battleship.App.Board do
     end
   end
 
-
-  def place_ship(:horizontal, grid, size, coords) do
+  def place_ship_at(:horizontal, cells, size, coords) do
     ship = List.duplicate(@ship, size)
-    first = coords["col"]
-    last = coords["col"] + size
-    row = Enum.at(grid, coords["row"])
+    firstCell = coords["col"]
+    lastCell = coords["col"] + size
+    row = Enum.at(cells, coords["row"])
 
-    row_before = Enum.slice(row, 0, first)
-    row_after = Enum.slice(row, last..@grid_size - 1)
+    row_before = Enum.slice(row, 0, firstCell)
+    row_after = Enum.slice(row, lastCell..@cells_size - 1)
     result = Enum.concat(row_before, ship)
     |> Enum.concat(row_after)
 
 
-    List.replace_at(grid, coords["row"], result)
+    List.replace_at(cells, coords["row"], result)
   end
 
-  def place_ship(:vertical, grid, size, coords) do
+  def place_ship_at(:vertical, cells, size, coords) do
     first = coords["row"]
     last = coords["row"] + size - 1
-    rows = Enum.to_list(first..last) # row indices
+    rows = Enum.to_list(first..last)
 
-    rows_before = Enum.slice(grid, 0, first)
-    rows_within = Enum.slice(grid, first..last)
-    rows_after = Enum.slice(grid, (last+1)..(@grid_size-1))
+    rows_before = Enum.slice(cells, 0, first)
+    rows_within = Enum.slice(cells, first..last)
+    rows_after = Enum.slice(cells, (last+1)..(@cells_size-1))
 
-    # for each row within, we replace the value at col
     rows_within = Enum.map(rows_within, fn row ->
       List.replace_at(row, coords["col"], @ship)
     end)
@@ -123,76 +110,69 @@ defmodule Battleship.App.Board do
     |> Enum.concat(rows_after)
   end
 
-
-  # can this ship be placed in the grid
-  def can_place?(grid, size, orient, coords) do
+  def can_place_ship_at?(cells, size, orient, coords) do
     case orient do
       "horizontal" ->
         end_location = coords["col"] + size - 1
-        coords["col"] >= 0 && end_location < @grid_size
-        && clear_path?(:horizontal, grid, size, coords)
+        coords["col"] >= 0 && end_location < @cells_size
+        && clear_path?(:horizontal, cells, size, coords)
 
       "vertical" ->
         end_location = coords["row"] + size - 1
-        coords["row"] >= 0 && end_location < @grid_size
-        && clear_path?(:vertical, grid, size, coords)
+        coords["row"] >= 0 && end_location < @cells_size
+        && clear_path?(:vertical, cells, size, coords)
     end
   end
 
-  # can only attack if unkown
-  def can_attack?(board, %{"row" => row, "col" => col}) do
-    val = get_grid_value_at(board.grid, row, col)
-    IO.puts("val:")
-    IO.inspect(val)
+  def can_attack_cell?(board, %{"row" => row, "col" => col}) do
+    val = get_cell_value(board.cells, row, col)
     val == @water || val == @ship
   end
 
-  def all_sunk?(board) do
-    Enum.all?(board.grid, fn row ->
+  def all_ships_sunk?(board) do
+    Enum.all?(board.cells, fn row ->
       Enum.all?(row, fn cell ->
         cell != @ship
       end)
     end)
   end
 
-  def attack(board, %{"row" => row, "col" => col}) do
-    case get_grid_value_at(board.grid, row, col) do
+  def attack_cell(board, %{"row" => row, "col" => col}) do
+    case get_cell_value(board.cells, row, col) do
       @ship ->
-        {:hit, Map.update!(board, :grid, fn x ->
-            set_grid_value_at(board.grid, row, col, @ship_hit)
+        {:hit, Map.update!(board, :cells, fn x ->
+            set_cell_value(board.cells, row, col, @ship_hit)
           end)
         }
       @water ->
-        {:miss, Map.update!(board, :grid, fn x ->
-            set_grid_value_at(board.grid, row, col, @water_hit)
+        {:miss, Map.update!(board, :cells, fn x ->
+            set_cell_value(board.cells, row, col, @water_hit)
           end)
         }
     end
   end
 
-  def get_grid_value_at(grid, row, col) do
-    Enum.at(grid, row)
+  def get_cell_value(cells, row, col) do
+    Enum.at(cells, row)
     |> Enum.at(col)
   end
 
-  def set_grid_value_at(grid, row, col, val) do
-    r = Enum.at(grid, row)
+  def set_cell_value(cells, row, col, val) do
+    r = Enum.at(cells, row)
     r = List.update_at(r, col, fn _ -> val end)
-    List.update_at(grid, row, fn _ -> r end)
+    List.update_at(cells, row, fn _ -> r end)
   end
 
-  # is the path clear of ships horizontally?
-  def clear_path?(:horizontal, grid, size, coords) do
+  def clear_path?(:horizontal, cells, size, coords) do
     endCol = coords["row"] + size - 1
-    Enum.at(grid, coords["row"])
+    Enum.at(cells, coords["row"])
     |> Enum.slice(coords["row"]..endCol)
     |> Enum.all?(fn cell -> cell == @water end)
   end
 
-  # is the path clear of ships vertically?
-  def clear_path?(:vertical, grid, size, coords) do
+  def clear_path?(:vertical, cells, size, coords) do
     endRow = coords["col"] + size - 1
-    grid
+    cells
     |> Enum.map(fn row -> Enum.at(row, coords["col"]) end)
     |> Enum.slice(coords["row"]..endRow)
     |> Enum.all?(fn cell -> cell == @water end)
