@@ -33,7 +33,7 @@ defmodule BattleshipWeb.GameChannel do
     user_id = String.to_integer(payload["id"])
     game = GameAgent.get(game_id)
 
-    case Game.attack(game, payload) do
+    case Game.attack_at(game, payload) do
       {:hit, game} ->
         with {:true, game} <- Game.game_over?(game) do
           handle_game_over(game, game_id)
