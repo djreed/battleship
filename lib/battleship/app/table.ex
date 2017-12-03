@@ -6,7 +6,6 @@ defmodule Battleship.App.Table do
 
   schema "tables" do
     field :name, :string
-    #TODO should have a list of all posted messages - need a message resource
 
     timestamps()
   end
