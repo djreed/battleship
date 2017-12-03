@@ -1,0 +1,7 @@
+Deployed URL:
+
+battleship.davidjreed.net
+
+Release:
+
+https://github.com/djreed/battleship/releases/tag/0.0.1

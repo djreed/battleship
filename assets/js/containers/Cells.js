@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { Row, Col } from 'react-bootstrap';
+import { Button } from 'react-bootstrap';
 import { css, StyleSheet } from 'aphrodite';
 import Cell from '../components/Cell.js';
 
@@ -163,19 +164,19 @@ class Cells extends React.Component {
           <div>
             <p>{'Orientation: ' + orientation}</p>
             <p>{'Ship size: ' + this.getShipSize(ships_to_place)}</p>
-            <button style={{display: 'inline'}}
+            <Button style={{display: 'inline'}}
                     onClick={e => {
                       e.preventDefault();
                       this.setState({ orientation: 'horizontal' });
                     }}>
               Horizontal
-            </button>
-            <button style={{display: 'inline'}}
+            </Button>
+            <Button style={{display: 'inline'}}
                     onClick={e => {
                       e.preventDefault();
                       this.setState({orientation: 'vertical'});
                     }}>
-              Vertical</button>
+              Vertical</Button>
           </div>
         }
         </div>
