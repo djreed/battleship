@@ -39,9 +39,9 @@ class Cell extends React.Component {
       case '~':
         return 'steelblue';
       case '|':
-        return 'darkslategrey';
-      case 'O':
         return 'purple';
+      case 'O':
+        return '#444444';
       case 'X':
         return 'red';
       default:
