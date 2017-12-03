@@ -2,8 +2,6 @@ defmodule Battleship.App.Game do
   alias Battleship.App.Board
   alias BattleshipWeb.Endpoint
 
-  # create a new game
-  # params: {from_id, from_name, to_id, to_name}
   def new(game_id, params) do
     %{
       game_id: game_id,
@@ -26,8 +24,6 @@ defmodule Battleship.App.Game do
     }
   end
 
-  # returns necessary info for client
-  # sanitizes opponent board to known values
   def client_view(game, client_id) do
     view = %{ status: game.status, game_id: game.game_id, winner: game.winner }
 
@@ -42,20 +38,19 @@ defmodule Battleship.App.Game do
     end
   end
 
-  #player with id 'id' attacks opponent at coords
-  def attack(game, %{"id" => id, "coords" => coords}) do
+  def attack_at(game, %{"id" => id, "coords" => coords}) do
     id = String.to_integer(id)
     cond do
-      id == game.player1.id && Board.can_attack?(game.player2, coords) ->
-        attack(game, id, game.player2, coords)
-      id == game.player2.id && Board.can_attack?(game.player1, coords) ->
-        attack(game, id, game.player1, coords)
+      id == game.player1.id && Board.can_attack_cell?(game.player2, coords) ->
+        attack_at(game, id, game.player2, coords)
+      id == game.player2.id && Board.can_attack_cell?(game.player1, coords) ->
+        attack_at(game, id, game.player1, coords)
       true -> {:error, game}
     end
   end
 
-  def attack(game, attacker_id, defender, coords) do
-    case Board.attack(defender, coords) do
+  def attack_at(game, attacker_id, defender, coords) do
+    case Board.attack_cell(defender, coords) do
       {:hit, board} ->
         game = update_board(game, defender.id, board)
         {:hit, game}
@@ -81,33 +76,24 @@ defmodule Battleship.App.Game do
     Map.update!(game, :status, fn _ -> status end)
   end
 
-  #toDO PRINTS HERE
   def game_over?(game) do
-    p1 = Board.all_sunk?(game.player1)
-    p2 = Board.all_sunk?(game.player2)
-    both = p1 && p2
+    p1_sunk = Board.all_ships_sunk?(game.player1)
+    p2_sunk = Board.all_ships_sunk?(game.player2)
+    both_sunk = p1_sunk && p2_sunk
 
-    IO.puts("game")
-    IO.inspect(game)
-    IO.puts("bools")
-    IO.inspect(p1)
-    IO.inspect(p2)
     cond do
-      game.waiting_on == 1 && (!p1 || !p2) ->
-        IO.puts("not done")
+      game.waiting_on == 1 && (!p1_sunk || !p2_sunk) ->
         {:false, game}
-      both ->
-        IO.puts("done - both")
+      both_sunk ->
         {:true, set_winner(game, "DRAW")}
-      p1 ->
-        IO.puts("done p1")
-        {:true, set_winner(game, game.player1.name)}
-      p2 ->
-        IO.puts("done p2")
+      p1_sunk ->
         {:true, set_winner(game, game.player2.name)}
+      p2_sunk ->
+        {:true, set_winner(game, game.player1.name)}
       true -> {:false, game}
     end
   end
+
 
   def set_winner(game, winner) do
     game
@@ -115,11 +101,13 @@ defmodule Battleship.App.Game do
     |> Map.update!(:winner, fn _ -> winner end)
   end
 
+
   def place_ship(game, %{"id" => id, "ship" => ship}) do
     id = String.to_integer(id)
     cond do
       id == game.player1.id ->
-        if Board.can_place?(game.player1.grid, ship["size"], ship["orientation"], ship["coords"]) do
+        if Board.can_place_ship_at?(game.player1.cells,
+              ship["size"], ship["orientation"], ship["coords"]) do
           game = Map.update!(game, :player1, fn board -> Board.place_ship(board, ship) end)
           game = set_placing_status(game, game.player1)
           {:ok, game}
@@ -128,7 +116,8 @@ defmodule Battleship.App.Game do
         end
 
       id == game.player2.id ->
-        if Board.can_place?(game.player2.grid, ship["size"], ship["orientation"], ship["coords"]) do
+        if Board.can_place_ship_at?(game.player2.cells,
+              ship["size"], ship["orientation"], ship["coords"]) do
           game = Map.update!(game, :player2, fn board -> Board.place_ship(board, ship) end)
           game = set_placing_status(game, game.player2)
           {:ok, game}
@@ -136,10 +125,11 @@ defmodule Battleship.App.Game do
           {:error, game}
         end
 
-      true ->
+       true ->
         {:error, game}
     end
   end
+
 
   def set_placing_status(game, player) do
     if Enum.count(player.ships_to_place) == 0 do
