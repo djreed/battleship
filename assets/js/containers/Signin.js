@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import { FormGroup, ControlLabel, FormControl, HelpBlock, Button } from 'react-bootstrap';
 import { connect } from 'react-redux';
 import { signin, joinChannel } from '../actions/app';
+import { css, Stylesheet } from 'aphrodite';
 
 
 type Props = {
@@ -16,7 +17,7 @@ class Signin extends React.Component {
   constructor() {
     super();
     this.state = {
-      username: '',
+      username: 'anonymous',
     };
 
     this.handleSubmit = this.handleSubmit.bind(this);

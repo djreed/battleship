@@ -8,7 +8,6 @@ const styles = StyleSheet.create({
   headerCell: {
     width: '30px',
     height: '30px',
-    backgroundColor: 'white',
     textAlign: 'center',
     display: 'table-cell',
   },

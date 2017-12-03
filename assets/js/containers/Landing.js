@@ -70,8 +70,8 @@ class Landing extends React.Component {
 
   render() {
     return (
-      <Row>
-        <Col md={8} offset={{ md: 2 }} >
+      <Row style={{marginTop: '100px'}}>
+        <Col md={4} offset={{ md: 1 }} >
           <form>
 
             <FormGroup id="table-code">
@@ -86,7 +86,13 @@ class Landing extends React.Component {
               Join Table
             </Button>
 
-            <p>or</p>
+          </form>
+        </Col>
+        <Col md={1}>
+          <p>OR</p>
+        </Col>
+        <Col md={4} >
+          <form>
             <FormGroup id="table-name">
               <FormControl
                 type="text"
