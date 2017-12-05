@@ -34,16 +34,16 @@ class Cell extends React.Component {
 
   getColor() {
     switch (this.props.symbol) {
-      case '?':
-        return 'white';
       case '~':
         return 'steelblue';
+      case '?':
+        return 'white';
+      case 'X':
+        return 'red';
       case '|':
         return 'purple';
       case 'O':
         return '#444444';
-      case 'X':
-        return 'red';
       default:
         return 'white';
     }

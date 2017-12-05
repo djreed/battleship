@@ -1,12 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { Row, Col } from 'react-bootstrap';
-import { Button } from 'react-bootstrap';
+import { Row, Col, Button } from 'react-bootstrap';
 import Cells from './Cells';
 import ChatPanel from './ChatPanel';
 import { placeShip, attack, sendMsg, resetGame } from '../actions/app';
-
 
 type Props = {
   user: Object,
@@ -77,7 +75,7 @@ class GameView extends React.Component {
 
     return (
       <div>
-        <h1>Game</h1>
+        <h1 className={'text-center'}>Battleship</h1>
         <h4>{'Status: ' + status}</h4>
         {status === "GAMEOVER" &&
           <div>
@@ -86,20 +84,17 @@ class GameView extends React.Component {
           </div>
         }
         <Row>
-          <Col md={5}>
+          <Col md={6}>
             {player &&
               <Cells style={{ width: '100%'}}  player={player} handleClick={this.handleClick}
                     status={status} ships_to_place={ships_to_place} is_user={true} />
             }
           </Col>
-          <Col md={5}>
+          <Col md={6}>
             {opponent &&
               <Cells style={{ width: '100%'}} player={opponent}  handleClick={this.handleClick}
                     status={status} is_user={false} />
             }
-          </Col>
-          <Col md={2}>
-            <ChatPanel />
           </Col>
         </Row>
       </div>

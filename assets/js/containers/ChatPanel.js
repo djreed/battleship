@@ -18,7 +18,6 @@ type Props = {
 class ChatPanel extends React.Component {
   constructor() {
     super();
-
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleAccept = this.handleAccept.bind(this);
   }
@@ -26,32 +25,24 @@ class ChatPanel extends React.Component {
   handleSubmit(params) {
     this.props.sendMsg(this.props.channel, params);
   }
-
   handleAccept(params) {
     this.props.acceptChallenge(this.props.channel, params,
       this.context.router, this.props.user);
   }
 
   props: Props
-
   render() {
     let { messages, user, game } = this.props;
-
-    //TODO temp
     if (!messages) {
       messages = [];
     }
-
     messages = messages.map(msg => {
       return <MessageShow user={user} show_challenges={!game} message={msg} handleAccept={this.handleAccept} />
     });
 
     return (
       <div>
-        <h3>Chat</h3>
-        <Scrollbars style={{ height: '400px' }}>
-          {messages}
-        </Scrollbars>
+        <h3>Chat</h3><Scrollbars style={{ height: '400px' }}>{messages}</Scrollbars>
         {user &&
         <MsgForm username={user.name} onSubmit={this.handleSubmit} />
         }
@@ -59,7 +50,6 @@ class ChatPanel extends React.Component {
     );
   }
 }
-
 ChatPanel.contextTypes = {
   router: PropTypes.object,
 };

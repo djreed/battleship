@@ -6,7 +6,6 @@ import { connect } from 'react-redux';
 import { signin, joinChannel } from '../actions/app';
 import { css, Stylesheet } from 'aphrodite';
 
-
 type Props = {
   signin: () => void,
   joinChannel: () => void,
@@ -62,7 +61,6 @@ class Signin extends React.Component {
   }
 
 }
-
 Signin.contextTypes = {
   router: PropTypes.object,
 };
