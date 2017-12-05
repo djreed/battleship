@@ -23,7 +23,7 @@ defmodule BattleshipWeb.TableChannel do
         resp = TableView.render("show.json", %{table: table})
         {:ok, resp, socket}
       else
-        {:error, %{reason: "invalid code"}}
+        {:error, %{reason: "invalid table code"}}
       end
     else
       {:error, %{reason: "unauthorized"}}
