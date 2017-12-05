@@ -72,6 +72,8 @@ class Landing extends React.Component {
     return (
       <Row style={{marginTop: '100px'}}>
         <Col md={4} offset={{ md: 1 }} >
+          <h3>Enter a Table Code</h3>
+
           <form>
 
             <FormGroup id="table-code">
@@ -88,10 +90,9 @@ class Landing extends React.Component {
 
           </form>
         </Col>
-        <Col md={1}>
-          <p>OR</p>
-        </Col>
+        <Col md={1}></Col>
         <Col md={4} >
+          <h3>Create a Table</h3>
           <form>
             <FormGroup id="table-name">
               <FormControl

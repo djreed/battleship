@@ -45,7 +45,7 @@ class Table extends React.Component {
     console.log('users:', users);
     return (
       <div>
-        <div  className={css(styles.header)}>
+        <div className={css(styles.header)}>
           <h1>{'Table: ' + tableName}</h1>
           <p>{'Join Code: ' + joinCode}</p>
         </div>

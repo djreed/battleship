@@ -76,7 +76,7 @@ class GameView extends React.Component {
     return (
       <div>
         <h1 className={'text-center'}>Battleship</h1>
-        <h4>{'Status: ' + status}</h4>
+        <h4 className={'text-center'}>{'Status: ' + status}</h4>
         {status === "GAMEOVER" &&
           <div>
             <h4>{this.getGameOverMSG(game.winner)}</h4>

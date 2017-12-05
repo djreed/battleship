@@ -16,7 +16,7 @@ class Signin extends React.Component {
   constructor() {
     super();
     this.state = {
-      username: 'anonymous',
+      username: 'Anonymous',
     };
 
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -32,7 +32,6 @@ class Signin extends React.Component {
     if (username && username !== '') {
       this.props.signin(this.props.channel, username, this.context.router);
     } else {
-      //TODO flash
       console.log('error, could not sign in');
     }
   }
@@ -41,21 +40,25 @@ class Signin extends React.Component {
 
   render() {
     return (
-      <div style={{marginTop: '100px'}}>
+      <div
+        style={{marginTop: '100px'}}>
+
+        <Col md={4} offset={{ md: 1}}>
+        <h1>Choose a username</h1>
         <form>
           <FormGroup id="username">
             <FormControl
-              type="text"
-              placeholder="Username"
-              onChange={(e) => this.setState({ username: e.target.value })}
-
-            />
+             type="text"
+             placeholder="Username"
+             onChange={(e) => this.setState({ username: e.target.value })}
+             />
           </FormGroup>
 
           <Button type="submit" onClick={this.handleSubmit}>
             Sign In
           </Button>
         </form>
+        </Col>
       </div>
     );
   }

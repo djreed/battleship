@@ -131,8 +131,17 @@ class Cells extends React.Component {
 
     switch (this.props.status) {
       case 'PLACING':
-        return 'Place your ships by selecting a tile. Ships can be placed horizontally or ' +
-          'vertically, and the highlighted cell is the front of the ship.';
+        return (
+          <div>
+            <span>
+              Place your ships horizontally or vertically by selecting a cell.
+            </span>
+            <br/>
+            <span>
+              The ship will extend either down or left, depending on orientation.
+            </span>
+          </div>
+        )
       case 'ATTACK':
         return 'Attack your opponent by selecting a cell on their grid.';
       case 'WAITING':

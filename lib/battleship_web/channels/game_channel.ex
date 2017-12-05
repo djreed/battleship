@@ -27,7 +27,6 @@ defmodule BattleshipWeb.GameChannel do
     {:reply, {:ok, %{}}, socket}
   end
 
-  #TODO on hit, swaps boards? or is it displaying wrong?
   def handle_in("attack", payload, socket) do
     game_id = payload["game_id"]
     user_id = String.to_integer(payload["id"])
