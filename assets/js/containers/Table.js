@@ -17,12 +17,12 @@ type Props = {
 
 const styles = StyleSheet.create({
   header: {
-    borderBottomWidth: '3px',
-    borderBottomStyle: 'solid',
+//    borderBottomWidth: '3px',
+//    borderBottomStyle: 'solid',
   },
   users: {
-    borderRightWidth: '3px',
-    borderRightStyle: 'solid',
+//    borderRightWidth: '3px',
+//    borderRightStyle: 'solid',
   }
 });
 

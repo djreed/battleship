@@ -42,7 +42,7 @@ class ChatPanel extends React.Component {
 
     return (
       <div>
-        <h3>Chat</h3><Scrollbars style={{ height: '400px' }}>{messages}</Scrollbars>
+        <h2>Chat</h2><Scrollbars style={{ height: '400px' }}>{messages}</Scrollbars>
         {user &&
         <MsgForm username={user.name} onSubmit={this.handleSubmit} />
         }
